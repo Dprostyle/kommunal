@@ -29,7 +29,7 @@ abstract final class AppDimensions {
   static const double historyIconSize = 36;
   static const double ctaHeight = 56;
   static const double minTouchTarget = 44;
-  static const double tabBarHeight = 56;
+  static const double tabBarHeight = 52;
   static const double tabIconSize = 24;
 
   // Shadows

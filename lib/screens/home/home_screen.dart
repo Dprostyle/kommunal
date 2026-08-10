@@ -141,7 +141,15 @@ class _HomeScreenState extends State<HomeScreen> {
                               const SizedBox(height: AppDimensions.cardGap),
                           ],
                           const SizedBox(height: AppDimensions.sectionGap),
-                          _TotalCard(total: _selectedTotal),
+                          _TotalCard(
+                            label: 'Итого к оплате:',
+                            total: _selectedTotal,
+                          ),
+                          const SizedBox(height: AppDimensions.cardGap),
+                          const _TotalCard(
+                            label: 'Баланс на карте:',
+                            total: _cardBalance,
+                          ),
                           const SizedBox(height: AppDimensions.space20),
                           PaymentButton(
                             label: 'Оплатить всё',
@@ -238,9 +246,12 @@ class _HomeHeader extends StatelessWidget {
   }
 }
 
-class _TotalCard extends StatelessWidget {
-  const _TotalCard({required this.total});
+const int _cardBalance = 500000;
 
+class _TotalCard extends StatelessWidget {
+  const _TotalCard({required this.label, required this.total});
+
+  final String label;
   final int total;
 
   @override
@@ -252,8 +263,8 @@ class _TotalCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const Expanded(
-            child: Text('Итого к оплате', style: AppTextStyles.sectionTitle),
+          Expanded(
+            child: Text(label, style: AppTextStyles.sectionTitle),
           ),
           AnimatedSwitcher(
             duration: const Duration(milliseconds: 180),
@@ -261,7 +272,7 @@ class _TotalCard extends StatelessWidget {
             switchOutCurve: Curves.easeIn,
             child: Text(
               formatAmount(total),
-              key: ValueKey(total),
+              key: ValueKey('$label-$total'),
               style: AppTextStyles.amountLarge,
             ),
           ),
