@@ -6,6 +6,7 @@ import '../../app/theme/app_text_styles.dart';
 import '../../data/repositories/payments_repository.dart';
 import '../../models/payment.dart';
 import '../../utils/formatters.dart';
+import '../../widgets/app_spinner.dart';
 import '../../widgets/empty_state.dart';
 import '../../widgets/section_card.dart';
 import 'payment_details_screen.dart';
@@ -94,7 +95,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   parent: AlwaysScrollableScrollPhysics(),
                 ),
                 slivers: [
-                  CupertinoSliverRefreshControl(onRefresh: _load),
+                  CupertinoSliverRefreshControl(
+                    onRefresh: _load,
+                    builder: AppSpinner.refreshBuilder,
+                  ),
                   SliverPadding(
                     padding: const EdgeInsets.fromLTRB(
                       AppDimensions.screenPaddingH,

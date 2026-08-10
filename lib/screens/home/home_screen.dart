@@ -7,6 +7,7 @@ import '../../data/repositories/bills_repository.dart';
 import '../../data/repositories/payments_repository.dart';
 import '../../models/utility_bill.dart';
 import '../../utils/formatters.dart';
+import '../../widgets/app_spinner.dart';
 import '../../widgets/empty_state.dart';
 import '../../widgets/payment_button.dart';
 import '../../widgets/section_card.dart';
@@ -113,7 +114,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   parent: AlwaysScrollableScrollPhysics(),
                 ),
                 slivers: [
-                  CupertinoSliverRefreshControl(onRefresh: _loadBills),
+                  CupertinoSliverRefreshControl(
+                    onRefresh: _loadBills,
+                    builder: AppSpinner.refreshBuilder,
+                  ),
                   SliverPadding(
                     padding: const EdgeInsets.fromLTRB(
                       AppDimensions.screenPaddingH,
@@ -270,10 +274,20 @@ class _TotalCard extends StatelessWidget {
             duration: const Duration(milliseconds: 180),
             switchInCurve: Curves.easeOut,
             switchOutCurve: Curves.easeIn,
+            layoutBuilder: (currentChild, previousChildren) {
+              return Stack(
+                alignment: Alignment.centerRight,
+                children: <Widget>[
+                  ...previousChildren,
+                  ?currentChild,
+                ],
+              );
+            },
             child: Text(
               formatAmount(total),
               key: ValueKey('$label-$total'),
               style: AppTextStyles.amountLarge,
+              textAlign: TextAlign.right,
             ),
           ),
         ],

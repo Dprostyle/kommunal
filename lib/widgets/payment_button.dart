@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import '../app/theme/app_colors.dart';
 import '../app/theme/app_dimensions.dart';
 import '../app/theme/app_text_styles.dart';
+import 'app_spinner.dart';
 
 /// Full-width primary CTA used for pay-all and similar actions.
 class PaymentButton extends StatelessWidget {
@@ -49,7 +50,8 @@ class PaymentButton extends StatelessWidget {
           disabledColor: AppColors.primary.withValues(alpha: 0.55),
           onPressed: isEnabled ? onPressed : null,
           child: isLoading
-              ? const CupertinoActivityIndicator(
+              ? const AppSpinner(
+                  size: 22,
                   color: CupertinoColors.white,
                 )
               : Row(

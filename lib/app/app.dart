@@ -111,27 +111,18 @@ class MainTabShell extends StatelessWidget {
         ),
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.house, size: AppDimensions.tabIconSize),
-            activeIcon: Icon(
-              CupertinoIcons.house_fill,
-              size: AppDimensions.tabIconSize,
-            ),
+            icon: _TabIcon(CupertinoIcons.house),
+            activeIcon: _TabIcon(CupertinoIcons.house_fill),
             label: 'Главная',
           ),
           BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.clock, size: AppDimensions.tabIconSize),
-            activeIcon: Icon(
-              CupertinoIcons.clock_fill,
-              size: AppDimensions.tabIconSize,
-            ),
+            icon: _TabIcon(CupertinoIcons.clock),
+            activeIcon: _TabIcon(CupertinoIcons.clock_fill),
             label: 'История',
           ),
           BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.person, size: AppDimensions.tabIconSize),
-            activeIcon: Icon(
-              CupertinoIcons.person_fill,
-              size: AppDimensions.tabIconSize,
-            ),
+            icon: _TabIcon(CupertinoIcons.person),
+            activeIcon: _TabIcon(CupertinoIcons.person_fill),
             label: 'Профиль',
           ),
         ],
@@ -160,6 +151,21 @@ class MainTabShell extends StatelessWidget {
             );
         }
       },
+    );
+  }
+}
+
+/// Nudges the tab icon down so the icon–label gap is slightly tighter.
+class _TabIcon extends StatelessWidget {
+  const _TabIcon(this.icon);
+
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Transform.translate(
+      offset: const Offset(0, AppDimensions.tabIconLabelGap),
+      child: Icon(icon, size: AppDimensions.tabIconSize),
     );
   }
 }

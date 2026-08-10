@@ -6,6 +6,7 @@ import '../../app/theme/app_text_styles.dart';
 import '../../data/repositories/profile_repository.dart';
 import '../../models/payment_card.dart';
 import '../../models/utility_account.dart';
+import '../../widgets/app_spinner.dart';
 import '../../widgets/empty_state.dart';
 import '../../widgets/section_card.dart';
 import '../../widgets/settings_row.dart';
@@ -110,7 +111,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   parent: AlwaysScrollableScrollPhysics(),
                 ),
                 slivers: [
-                  CupertinoSliverRefreshControl(onRefresh: _load),
+                  CupertinoSliverRefreshControl(
+                    onRefresh: _load,
+                    builder: AppSpinner.refreshBuilder,
+                  ),
                   SliverPadding(
                     padding: const EdgeInsets.fromLTRB(
                       AppDimensions.screenPaddingH,
