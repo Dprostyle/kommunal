@@ -13,12 +13,10 @@ class UtilityBillCard extends StatelessWidget {
     super.key,
     required this.bill,
     required this.onSelectionChanged,
-    required this.onPayPressed,
   });
 
   final UtilityBill bill;
   final ValueChanged<bool> onSelectionChanged;
-  final VoidCallback onPayPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +24,7 @@ class UtilityBillCard extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(8, 14, 16, 14),
       onTap: () => onSelectionChanged(!bill.isSelected),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SelectionCheckbox(
             selected: bill.isSelected,
@@ -59,16 +57,6 @@ class UtilityBillCard extends StatelessWidget {
                 Text(
                   'Лицевой счёт: ${bill.accountNumber}',
                   style: AppTextStyles.secondary,
-                ),
-                const SizedBox(height: AppDimensions.space8),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: CupertinoButton(
-                    padding: EdgeInsets.zero,
-                    minimumSize: const Size(28, 28),
-                    onPressed: onPayPressed,
-                    child: const Text('Оплатить', style: AppTextStyles.action),
-                  ),
                 ),
               ],
             ),

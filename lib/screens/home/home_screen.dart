@@ -72,8 +72,8 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  Future<void> _paySelected({UtilityBill? single}) async {
-    final bills = single != null ? [single] : _selectedBills;
+  Future<void> _paySelected() async {
+    final bills = _selectedBills;
     if (bills.isEmpty || _paying) return;
 
     setState(() => _paying = true);
@@ -136,8 +136,6 @@ class _HomeScreenState extends State<HomeScreen> {
                               bill: _bills[i],
                               onSelectionChanged: (selected) =>
                                   _toggleSelection(_bills[i].id, selected),
-                              onPayPressed: () =>
-                                  _paySelected(single: _bills[i]),
                             ),
                             if (i != _bills.length - 1)
                               const SizedBox(height: AppDimensions.cardGap),
@@ -149,7 +147,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             label: 'Оплатить всё',
                             isLoading: _paying,
                             enabled: _selectedBills.isNotEmpty,
-                            onPressed: () => _paySelected(),
+                            onPressed: _paySelected,
                           ),
                         ],
                       ]),
@@ -173,7 +171,13 @@ class _HomeHeader extends StatelessWidget {
         const Expanded(
           child: Text(
             'Добро пожаловать!',
-            style: AppTextStyles.screenTitle,
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.w700,
+              color: AppColors.textPrimary,
+              letterSpacing: -0.4,
+              height: 1.2,
+            ),
           ),
         ),
         Semantics(
