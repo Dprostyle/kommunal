@@ -139,7 +139,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           const SizedBox(height: AppDimensions.space12),
                           PaymentButton(
-                            label: 'Оплатить всё',
+                            label: 'Оплатить',
                             isLoading: _paying,
                             enabled: _selectedBills.isNotEmpty,
                             onPressed: _paySelected,
@@ -155,7 +155,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-/// Compact horizontal card balance summary (compact balance card).
+/// Premium bank-card style balance summary — visually distinct from service rows.
 class _CompactBalanceCard extends StatelessWidget {
   const _CompactBalanceCard();
 
@@ -172,65 +172,233 @@ class _CompactBalanceCard extends StatelessWidget {
         message: '$_maskedNumber\n${formatAmount(_balance)}',
       ),
       child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppDimensions.space12,
-          vertical: AppDimensions.space8,
-        ),
+        height: 148,
         decoration: BoxDecoration(
-          color: AppColors.card,
-          borderRadius: BorderRadius.circular(AppDimensions.radiusCard),
-          border: Border.all(color: const Color(0xFFBFD9FF), width: 1),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: AppDimensions.serviceIconSize,
-              height: AppDimensions.serviceIconSize,
-              decoration: const BoxDecoration(
-                color: AppColors.cardIconBg,
-                shape: BoxShape.circle,
-              ),
-              alignment: Alignment.center,
-              child: const Icon(
-                CupertinoIcons.creditcard_fill,
-                size: 18,
-                color: AppColors.primary,
-              ),
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.primary.withValues(alpha: 0.35),
+              blurRadius: 24,
+              offset: const Offset(0, 10),
             ),
-            const SizedBox(width: AppDimensions.space8),
-            const Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'Баланс на карте',
-                    style: AppTextStyles.serviceName,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  SizedBox(height: 1),
-                  Text(
-                    _maskedNumber,
-                    style: AppTextStyles.secondary,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: AppDimensions.space8),
-            Text(
-              formatAmount(_balance),
-              style: AppTextStyles.amount.copyWith(color: AppColors.primary),
-            ),
-            const SizedBox(width: 2),
-            const Icon(
-              CupertinoIcons.right_chevron,
-              size: 16,
-              color: AppColors.textTertiary,
+            BoxShadow(
+              color: const Color(0xFF043A8C).withValues(alpha: 0.18),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
             ),
           ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: Stack(
+            children: [
+              // Saturated blue gradient surface
+              const DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Color(0xFF1A7CFF),
+                      Color(0xFF0A6CFF),
+                      Color(0xFF0652C7),
+                    ],
+                    stops: [0.0, 0.45, 1.0],
+                  ),
+                ),
+                child: SizedBox.expand(),
+              ),
+              // Soft glass highlight
+              Positioned(
+                top: -40,
+                left: -20,
+                child: Container(
+                  width: 160,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: CupertinoColors.white.withValues(alpha: 0.12),
+                  ),
+                ),
+              ),
+              // Decorative mini card (rotated, clipped by parent)
+              const Positioned(
+                right: -28,
+                bottom: -18,
+                child: _DecorativeBankCard(),
+              ),
+              // Content
+              Padding(
+                padding: const EdgeInsets.fromLTRB(18, 16, 16, 18),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          width: 36,
+                          height: 36,
+                          decoration: BoxDecoration(
+                            color: CupertinoColors.white.withValues(alpha: 0.18),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          alignment: Alignment.center,
+                          child: Icon(
+                            CupertinoIcons.creditcard_fill,
+                            size: 18,
+                            color: CupertinoColors.white.withValues(alpha: 0.95),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        const Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'Баланс на карте',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                  color: CupertinoColors.white,
+                                  letterSpacing: -0.2,
+                                  height: 1.2,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              SizedBox(height: 2),
+                              Text(
+                                _maskedNumber,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w400,
+                                  color: Color(0xB3FFFFFF),
+                                  letterSpacing: 0.6,
+                                  height: 1.2,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          width: 28,
+                          height: 28,
+                          decoration: BoxDecoration(
+                            color: CupertinoColors.white.withValues(alpha: 0.16),
+                            shape: BoxShape.circle,
+                          ),
+                          alignment: Alignment.center,
+                          child: Icon(
+                            CupertinoIcons.right_chevron,
+                            size: 14,
+                            color: CupertinoColors.white.withValues(alpha: 0.9),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const Spacer(),
+                    Text(
+                      'Доступно',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: CupertinoColors.white.withValues(alpha: 0.7),
+                        letterSpacing: -0.1,
+                        height: 1.2,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      formatAmount(_balance),
+                      style: const TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.w700,
+                        color: CupertinoColors.white,
+                        letterSpacing: -0.6,
+                        height: 1.1,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Semi-transparent stylized card silhouette for premium depth.
+class _DecorativeBankCard extends StatelessWidget {
+  const _DecorativeBankCard();
+
+  @override
+  Widget build(BuildContext context) {
+    return Transform.rotate(
+      angle: -0.28,
+      child: Opacity(
+        opacity: 0.28,
+        child: Container(
+          width: 118,
+          height: 74,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color(0xFFFFFFFF),
+                Color(0xFFB8D4FF),
+              ],
+            ),
+            border: Border.all(
+              color: CupertinoColors.white.withValues(alpha: 0.5),
+              width: 1,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF043A8C).withValues(alpha: 0.25),
+                blurRadius: 12,
+                offset: const Offset(0, 6),
+              ),
+            ],
+          ),
+          padding: const EdgeInsets.all(10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 22,
+                height: 16,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFFD54F).withValues(alpha: 0.85),
+                  borderRadius: BorderRadius.circular(3),
+                ),
+              ),
+              const Spacer(),
+              Container(
+                height: 5,
+                width: 56,
+                decoration: BoxDecoration(
+                  color: CupertinoColors.white.withValues(alpha: 0.55),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 5),
+              Container(
+                height: 4,
+                width: 36,
+                decoration: BoxDecoration(
+                  color: CupertinoColors.white.withValues(alpha: 0.4),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
