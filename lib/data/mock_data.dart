@@ -34,6 +34,20 @@ abstract final class MockData {
       accountNumber: '400369852',
       amount: 26100,
     ),
+    UtilityBill(
+      id: 'bill_phone',
+      type: UtilityServiceType.phone,
+      title: 'Телефон',
+      accountNumber: '500478963',
+      amount: 35000,
+    ),
+    UtilityBill(
+      id: 'bill_internet',
+      type: UtilityServiceType.internet,
+      title: 'Интернет',
+      accountNumber: '600589741',
+      amount: 89000,
+    ),
   ];
 
   static const List<UtilityAccount> accounts = [
@@ -60,6 +74,18 @@ abstract final class MockData {
       type: UtilityServiceType.garbage,
       title: 'Мусор',
       accountNumber: '400369852',
+    ),
+    UtilityAccount(
+      id: 'acc_5',
+      type: UtilityServiceType.phone,
+      title: 'Телефон',
+      accountNumber: '500478963',
+    ),
+    UtilityAccount(
+      id: 'acc_6',
+      type: UtilityServiceType.internet,
+      title: 'Интернет',
+      accountNumber: '600589741',
     ),
   ];
 

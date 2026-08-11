@@ -92,7 +92,7 @@ void main() {
 
     await tester.pumpAndSettle();
 
-    expect(find.text('Добро пожаловать!'), findsOneWidget);
+    expect(find.text('Баланс на карте'), findsOneWidget);
     expect(find.text('Главная'), findsWidgets);
     expect(find.text('История'), findsWidgets);
     expect(find.text('Профиль'), findsWidgets);

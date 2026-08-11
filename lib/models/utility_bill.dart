@@ -4,6 +4,8 @@ enum UtilityServiceType {
   gas,
   water,
   garbage,
+  phone,
+  internet,
 }
 
 /// A payable utility bill item (API-friendly, UI-independent).

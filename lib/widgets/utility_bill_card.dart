@@ -5,32 +5,23 @@ import '../app/theme/app_text_styles.dart';
 import '../models/utility_bill.dart';
 import '../utils/formatters.dart';
 import 'app_icon.dart';
-import 'selection_checkbox.dart';
 import 'section_card.dart';
 
 class UtilityBillCard extends StatelessWidget {
   const UtilityBillCard({
     super.key,
     required this.bill,
-    required this.onSelectionChanged,
   });
 
   final UtilityBill bill;
-  final ValueChanged<bool> onSelectionChanged;
 
   @override
   Widget build(BuildContext context) {
     return SectionCard(
-      padding: const EdgeInsets.fromLTRB(8, 14, 16, 14),
-      onTap: () => onSelectionChanged(!bill.isSelected),
+      padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SelectionCheckbox(
-            selected: bill.isSelected,
-            onChanged: onSelectionChanged,
-          ),
-          const SizedBox(width: 2),
           AppIcon.utility(type: bill.type),
           const SizedBox(width: AppDimensions.space12),
           Expanded(

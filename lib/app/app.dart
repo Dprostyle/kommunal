@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 
 import '../data/repositories/bills_repository.dart';
 import '../data/repositories/payments_repository.dart';
@@ -109,6 +110,7 @@ class MainTabShell extends StatelessWidget {
         border: const Border(
           top: BorderSide(color: Color(0x14000000), width: 0.5),
         ),
+        onTap: (_) => HapticFeedback.mediumImpact(),
         items: const [
           BottomNavigationBarItem(
             icon: _TabIcon(CupertinoIcons.house),

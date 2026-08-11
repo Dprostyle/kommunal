@@ -54,6 +54,22 @@ class AppIcon extends StatelessWidget {
           foregroundColor: AppColors.garbageFg,
           child: const _LeafIcon(),
         );
+      case UtilityServiceType.phone:
+        return AppIcon(
+          key: key,
+          size: size,
+          backgroundColor: AppColors.phoneBg,
+          foregroundColor: AppColors.phoneFg,
+          child: const Icon(CupertinoIcons.phone_fill, size: 22),
+        );
+      case UtilityServiceType.internet:
+        return AppIcon(
+          key: key,
+          size: size,
+          backgroundColor: AppColors.internetBg,
+          foregroundColor: AppColors.internetFg,
+          child: const Icon(CupertinoIcons.wifi, size: 22),
+        );
     }
   }
 

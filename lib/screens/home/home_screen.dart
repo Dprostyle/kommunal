@@ -12,6 +12,7 @@ import '../../widgets/empty_state.dart';
 import '../../widgets/payment_button.dart';
 import '../../widgets/section_card.dart';
 import '../../widgets/utility_bill_card.dart';
+import '../profile/widgets/simple_info_sheet.dart';
 import 'widgets/payment_result_sheet.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -63,15 +64,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   List<UtilityBill> get _selectedBills =>
       _bills.where((b) => b.isSelected).toList();
-
-  void _toggleSelection(String id, bool selected) {
-    setState(() {
-      _bills = [
-        for (final bill in _bills)
-          if (bill.id == id) bill.copyWith(isSelected: selected) else bill,
-      ];
-    });
-  }
 
   Future<void> _paySelected() async {
     final bills = _selectedBills;
@@ -136,11 +128,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           )
                         else ...[
                           for (var i = 0; i < _bills.length; i++) ...[
-                            UtilityBillCard(
-                              bill: _bills[i],
-                              onSelectionChanged: (selected) =>
-                                  _toggleSelection(_bills[i].id, selected),
-                            ),
+                            UtilityBillCard(bill: _bills[i]),
                             if (i != _bills.length - 1)
                               const SizedBox(height: AppDimensions.cardGap),
                           ],
@@ -148,11 +136,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           _TotalCard(
                             label: 'Итого к оплате:',
                             total: _selectedTotal,
-                          ),
-                          const SizedBox(height: AppDimensions.cardGap),
-                          const _TotalCard(
-                            label: 'Баланс на карте:',
-                            total: _cardBalance,
                           ),
                           const SizedBox(height: AppDimensions.space20),
                           PaymentButton(
@@ -180,18 +163,7 @@ class _HomeHeader extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        const Expanded(
-          child: Text(
-            'Добро пожаловать!',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.w700,
-              color: AppColors.textPrimary,
-              letterSpacing: -0.4,
-              height: 1.2,
-            ),
-          ),
-        ),
+        const Expanded(child: _CompactBalanceCard()),
         Semantics(
           button: true,
           label: 'Уведомления, есть новые',
@@ -236,7 +208,10 @@ class _HomeHeader extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: AppColors.notificationDot,
                         shape: BoxShape.circle,
-                        border: Border.all(color: AppColors.background, width: 1.5),
+                        border: Border.all(
+                          color: AppColors.background,
+                          width: 1.5,
+                        ),
                       ),
                     ),
                   ),
@@ -250,7 +225,87 @@ class _HomeHeader extends StatelessWidget {
   }
 }
 
-const int _cardBalance = 500000;
+/// Compact horizontal card balance summary (compact balance card).
+class _CompactBalanceCard extends StatelessWidget {
+  const _CompactBalanceCard();
+
+  static const int _balance = 500000;
+  static const String _maskedNumber = '•••• 4567';
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () => showSimpleInfoSheet(
+        context,
+        title: 'Баланс на карте',
+        message: '$_maskedNumber\n${formatAmount(_balance)}',
+      ),
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppDimensions.space12,
+          vertical: AppDimensions.space12,
+        ),
+        decoration: BoxDecoration(
+          color: AppColors.card,
+          borderRadius: BorderRadius.circular(AppDimensions.radiusCard),
+          border: Border.all(color: const Color(0xFFBFD9FF), width: 1),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: AppDimensions.serviceIconSize,
+              height: AppDimensions.serviceIconSize,
+              decoration: const BoxDecoration(
+                color: AppColors.cardIconBg,
+                shape: BoxShape.circle,
+              ),
+              alignment: Alignment.center,
+              child: const Icon(
+                CupertinoIcons.creditcard_fill,
+                size: 20,
+                color: AppColors.primary,
+              ),
+            ),
+            const SizedBox(width: AppDimensions.space12),
+            const Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Баланс на карте',
+                    style: AppTextStyles.serviceName,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  SizedBox(height: 2),
+                  Text(
+                    _maskedNumber,
+                    style: AppTextStyles.secondary,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: AppDimensions.space8),
+            Text(
+              formatAmount(_balance),
+              style: AppTextStyles.amount.copyWith(color: AppColors.primary),
+            ),
+            const SizedBox(width: 2),
+            const Icon(
+              CupertinoIcons.right_chevron,
+              size: 16,
+              color: AppColors.textTertiary,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 class _TotalCard extends StatelessWidget {
   const _TotalCard({required this.label, required this.total});

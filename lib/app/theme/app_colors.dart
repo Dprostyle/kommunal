@@ -35,6 +35,12 @@ abstract final class AppColors {
   static const Color garbageBg = Color(0xFFEAF8EF);
   static const Color garbageFg = Color(0xFF2FAE66);
 
+  static const Color phoneBg = Color(0xFFF0EBFF);
+  static const Color phoneFg = Color(0xFF7C5CFC);
+
+  static const Color internetBg = Color(0xFFE5F7F8);
+  static const Color internetFg = Color(0xFF0D9488);
+
   static const Color cardIconBg = Color(0xFFE8F1FF);
   static const Color accountsIconBg = Color(0xFFE8F9F0);
   static const Color languageIconBg = Color(0xFFF3E8FF);
