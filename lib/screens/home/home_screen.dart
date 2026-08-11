@@ -113,14 +113,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   SliverPadding(
                     padding: const EdgeInsets.fromLTRB(
                       AppDimensions.screenPaddingH,
-                      AppDimensions.space16,
+                      AppDimensions.space8,
                       AppDimensions.screenPaddingH,
-                      AppDimensions.space32,
+                      AppDimensions.space12,
                     ),
                     sliver: SliverList(
                       delegate: SliverChildListDelegate([
-                        const _HomeHeader(),
-                        const SizedBox(height: AppDimensions.space24),
+                        const _CompactBalanceCard(),
+                        const SizedBox(height: AppDimensions.space12),
                         if (_bills.isEmpty)
                           const SizedBox(
                             height: 280,
@@ -137,7 +137,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             label: 'Итого к оплате:',
                             total: _selectedTotal,
                           ),
-                          const SizedBox(height: AppDimensions.space20),
+                          const SizedBox(height: AppDimensions.space12),
                           PaymentButton(
                             label: 'Оплатить всё',
                             isLoading: _paying,
@@ -151,76 +151,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
       ),
-    );
-  }
-}
-
-class _HomeHeader extends StatelessWidget {
-  const _HomeHeader();
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        const Expanded(child: _CompactBalanceCard()),
-        Semantics(
-          button: true,
-          label: 'Уведомления, есть новые',
-          child: CupertinoButton(
-            padding: const EdgeInsets.all(AppDimensions.space8),
-            minimumSize: const Size(
-              AppDimensions.minTouchTarget,
-              AppDimensions.minTouchTarget,
-            ),
-            onPressed: () {
-              showCupertinoDialog<void>(
-                context: context,
-                builder: (context) => CupertinoAlertDialog(
-                  title: const Text('Уведомления'),
-                  content: const Text('Новых уведомлений нет.'),
-                  actions: [
-                    CupertinoDialogAction(
-                      onPressed: () => Navigator.of(context).pop(),
-                      child: const Text('OK'),
-                    ),
-                  ],
-                ),
-              );
-            },
-            child: SizedBox(
-              width: 28,
-              height: 28,
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  const Icon(
-                    CupertinoIcons.bell,
-                    size: 26,
-                    color: AppColors.textPrimary,
-                  ),
-                  Positioned(
-                    right: -1,
-                    top: -1,
-                    child: Container(
-                      width: 9,
-                      height: 9,
-                      decoration: BoxDecoration(
-                        color: AppColors.notificationDot,
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: AppColors.background,
-                          width: 1.5,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }
@@ -244,7 +174,7 @@ class _CompactBalanceCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(
           horizontal: AppDimensions.space12,
-          vertical: AppDimensions.space12,
+          vertical: AppDimensions.space8,
         ),
         decoration: BoxDecoration(
           color: AppColors.card,
@@ -263,11 +193,11 @@ class _CompactBalanceCard extends StatelessWidget {
               alignment: Alignment.center,
               child: const Icon(
                 CupertinoIcons.creditcard_fill,
-                size: 20,
+                size: 18,
                 color: AppColors.primary,
               ),
             ),
-            const SizedBox(width: AppDimensions.space12),
+            const SizedBox(width: AppDimensions.space8),
             const Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -279,7 +209,7 @@ class _CompactBalanceCard extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  SizedBox(height: 2),
+                  SizedBox(height: 1),
                   Text(
                     _maskedNumber,
                     style: AppTextStyles.secondary,
@@ -318,8 +248,10 @@ class _TotalCard extends StatelessWidget {
     return SectionCard(
       padding: const EdgeInsets.symmetric(
         horizontal: AppDimensions.cardPadding,
-        vertical: AppDimensions.space20,
+        vertical: AppDimensions.space12,
       ),
+      showShadow: false,
+      border: Border.all(color: AppColors.separator),
       child: Row(
         children: [
           Expanded(
@@ -341,7 +273,7 @@ class _TotalCard extends StatelessWidget {
             child: Text(
               formatAmount(total),
               key: ValueKey('$label-$total'),
-              style: AppTextStyles.amountLarge,
+              style: AppTextStyles.amountLarge.copyWith(fontSize: 18),
               textAlign: TextAlign.right,
             ),
           ),

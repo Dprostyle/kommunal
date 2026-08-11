@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 
 import '../../app/theme/app_colors.dart';
 import '../../app/theme/app_dimensions.dart';
@@ -67,12 +68,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         actions: [
           CupertinoDialogAction(
-            onPressed: () => Navigator.of(context).pop(false),
+            onPressed: () {
+              HapticFeedback.mediumImpact();
+              Navigator.of(context).pop(false);
+            },
             child: const Text('Отмена'),
           ),
           CupertinoDialogAction(
             isDestructiveAction: true,
-            onPressed: () => Navigator.of(context).pop(true),
+            onPressed: () {
+              HapticFeedback.mediumImpact();
+              Navigator.of(context).pop(true);
+            },
             child: const Text('Выйти'),
           ),
         ],
@@ -187,6 +194,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           backgroundColor: AppColors.dangerSoft
                               .withValues(alpha: 0.55),
                           showShadow: false,
+                          border: Border.all(
+                            color: AppColors.danger.withValues(alpha: 0.55),
+                          ),
                           child: SettingsRow(
                             title: 'Выйти из аккаунта',
                             subtitle: '',

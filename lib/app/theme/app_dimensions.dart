@@ -12,22 +12,22 @@ abstract final class AppDimensions {
   // Screen / layout
   static const double screenPaddingH = 20;
   static const double cardPadding = 16;
-  static const double cardGap = 8;
-  static const double sectionGap = 24;
+  static const double cardGap = 6;
+  static const double sectionGap = 12;
 
   // Radii
   static const double radiusSm = 10;
   static const double radiusMd = 12;
-  static const double radiusCard = 20;
-  static const double radiusCta = 16;
-  static const double radiusIcon = 12;
+  static const double radiusCard = 16;
+  static const double radiusCta = 14;
+  static const double radiusIcon = 10;
 
   // Components
   static const double checkboxSize = 24;
-  static const double serviceIconSize = 44;
+  static const double serviceIconSize = 36;
   static const double profileIconSize = 40;
   static const double historyIconSize = 36;
-  static const double ctaHeight = 56;
+  static const double ctaHeight = 48;
   static const double minTouchTarget = 44;
   static const double tabBarHeight = 56;
   static const double tabIconSize = 24;

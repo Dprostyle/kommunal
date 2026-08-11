@@ -16,11 +16,11 @@ abstract final class AppColors {
 
   static const Color success = Color(0xFF22C878);
   static const Color successSoft = Color(0xFFE8F9F0);
+  static const Color credit = Color(0xFF138808);
   static const Color danger = Color(0xFFE53935);
   static const Color dangerSoft = Color(0xFFFDECEC);
 
   static const Color tabInactive = Color(0xFF9AA5B5);
-  static const Color notificationDot = Color(0xFFFF3B30);
 
   // Service icon pastel surfaces
   static const Color electricityBg = Color(0xFFFFF4E5);

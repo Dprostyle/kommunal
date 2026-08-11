@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 
 import '../app/theme/app_colors.dart';
 import '../app/theme/app_dimensions.dart';
@@ -48,7 +49,12 @@ class PaymentButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppDimensions.radiusCta),
           color: AppColors.primary,
           disabledColor: AppColors.primary.withValues(alpha: 0.55),
-          onPressed: isEnabled ? onPressed : null,
+          onPressed: isEnabled
+              ? () {
+                  HapticFeedback.mediumImpact();
+                  onPressed!();
+                }
+              : null,
           child: isLoading
               ? const AppSpinner(
                   size: 22,

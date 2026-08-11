@@ -13,6 +13,7 @@ class SectionCard extends StatelessWidget {
     this.onTap,
     this.backgroundColor = AppColors.card,
     this.showShadow = true,
+    this.border,
   });
 
   final Widget child;
@@ -21,6 +22,7 @@ class SectionCard extends StatelessWidget {
   final VoidCallback? onTap;
   final Color backgroundColor;
   final bool showShadow;
+  final Border? border;
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +31,7 @@ class SectionCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: backgroundColor,
         borderRadius: BorderRadius.circular(AppDimensions.radiusCard),
+        border: border,
         boxShadow: showShadow
             ? const [
                 BoxShadow(

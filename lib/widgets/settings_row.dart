@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 
 import '../app/theme/app_colors.dart';
 import '../app/theme/app_dimensions.dart';
@@ -34,7 +35,10 @@ class SettingsRow extends StatelessWidget {
       children: [
         CupertinoButton(
           padding: EdgeInsets.zero,
-          onPressed: onTap,
+          onPressed: () {
+            HapticFeedback.mediumImpact();
+            onTap();
+          },
           child: Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: AppDimensions.cardPadding,
