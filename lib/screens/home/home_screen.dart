@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 
 import '../../app/theme/app_colors.dart';
 import '../../app/theme/app_dimensions.dart';
@@ -9,8 +10,6 @@ import '../../models/utility_bill.dart';
 import '../../utils/formatters.dart';
 import '../../widgets/app_spinner.dart';
 import '../../widgets/empty_state.dart';
-import '../../widgets/payment_button.dart';
-import '../../widgets/section_card.dart';
 import '../../widgets/utility_bill_card.dart';
 import '../profile/widgets/simple_info_sheet.dart';
 import 'widgets/payment_result_sheet.dart';
@@ -94,6 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _selectBill(String billId) {
+    HapticFeedback.mediumImpact();
     setState(() => _selectedBillId = billId);
   }
 
@@ -177,12 +177,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           _PaymentInputCard(
                             label: _paymentLabelFor(_selectedBill?.type),
                             controller: _amountController,
-                          ),
-                          const SizedBox(height: AppDimensions.cardGap),
-                          PaymentButton(
-                            label: 'Оплатить',
-                            isLoading: _paying,
                             enabled: _canPay,
+                            isLoading: _paying,
                             onPressed: _paySelected,
                           ),
                         ],
@@ -462,17 +458,28 @@ class _PaymentInputCard extends StatefulWidget {
   const _PaymentInputCard({
     required this.label,
     required this.controller,
+    required this.enabled,
+    required this.isLoading,
+    required this.onPressed,
   });
 
   final String? label;
   final TextEditingController controller;
+  final bool enabled;
+  final bool isLoading;
+  final VoidCallback? onPressed;
 
   @override
   State<_PaymentInputCard> createState() => _PaymentInputCardState();
 }
 
 class _PaymentInputCardState extends State<_PaymentInputCard> {
-  static const Color _focusBorderColor = Color(0xFF6600FF);
+  static const Color _surfaceDark = Color(0xFF1C1F26);
+  static const Color _textLight = Color(0xFFF5F5F7);
+  static const Color _textCurrency = Color(0xFFB8BCC4);
+  static const Color _placeholder = Color(0xFF6B7280);
+  static const Color _disabledBg = Color(0xFF2A2D35);
+  static const Color _disabledText = Color(0xFF5C6370);
 
   final FocusNode _focusNode = FocusNode();
 
@@ -488,58 +495,134 @@ class _PaymentInputCardState extends State<_PaymentInputCard> {
     super.dispose();
   }
 
+  bool get _isActionEnabled =>
+      widget.enabled && !widget.isLoading && widget.onPressed != null;
+
   @override
   Widget build(BuildContext context) {
-    final borderColor =
-        _focusNode.hasFocus ? _focusBorderColor : AppColors.separator;
+    final borderColor = _focusNode.hasFocus
+        ? AppColors.primary
+        : AppColors.primary.withValues(alpha: 0.65);
+    final borderWidth = _focusNode.hasFocus ? 1.5 : 1.0;
 
-    return SectionCard(
-      padding: const EdgeInsets.fromLTRB(12, 6, 12, 8),
-      showShadow: false,
-      border: Border.all(color: AppColors.separator),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          if (widget.label != null) ...[
-            Text(
-              widget.label!,
-              style: AppTextStyles.secondary,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: AppDimensions.space4),
-          ],
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              CupertinoTextField(
-                controller: widget.controller,
-                focusNode: _focusNode,
-                keyboardType: TextInputType.number,
-                placeholder: 'Введите сумму',
-                textAlign: TextAlign.center,
-                style: AppTextStyles.amountLarge.copyWith(fontSize: 18),
-                padding: const EdgeInsets.fromLTRB(12, 12, 40, 12),
-                decoration: BoxDecoration(
-                  color: AppColors.background,
-                  borderRadius:
-                      BorderRadius.circular(AppDimensions.radiusCard),
-                  border: Border.all(color: borderColor),
-                ),
-              ),
-              Positioned(
-                right: 10,
-                child: Text(
-                  'Сум',
-                  style: AppTextStyles.amount.copyWith(
-                    color: AppColors.textPrimary,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (widget.label != null) ...[
+          Text(
+            widget.label!,
+            style: AppTextStyles.secondary,
           ),
+          const SizedBox(height: AppDimensions.space8),
         ],
-      ),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              width: AppDimensions.minTouchTarget,
+              height: AppDimensions.minTouchTarget,
+              decoration: const BoxDecoration(
+                color: AppColors.primary,
+                shape: BoxShape.circle,
+              ),
+              alignment: Alignment.center,
+              child: const Icon(
+                CupertinoIcons.arrow_right_arrow_left,
+                size: 20,
+                color: CupertinoColors.white,
+              ),
+            ),
+            const SizedBox(width: AppDimensions.space8),
+            Expanded(
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  CupertinoTextField(
+                    controller: widget.controller,
+                    focusNode: _focusNode,
+                    keyboardType: TextInputType.number,
+                    placeholder: 'Введите сумму',
+                    placeholderStyle: AppTextStyles.amount.copyWith(
+                      color: _placeholder,
+                      fontWeight: FontWeight.w400,
+                      fontSize: 15,
+                    ),
+                    style: AppTextStyles.amount.copyWith(
+                      color: _textLight,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 16,
+                    ),
+                    cursorColor: AppColors.primary,
+                    padding: const EdgeInsets.fromLTRB(
+                      AppDimensions.space12,
+                      AppDimensions.space12,
+                      44,
+                      AppDimensions.space12,
+                    ),
+                    decoration: BoxDecoration(
+                      color: _surfaceDark,
+                      borderRadius:
+                          BorderRadius.circular(AppDimensions.radiusMd),
+                      border: Border.all(
+                        color: borderColor,
+                        width: borderWidth,
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    right: AppDimensions.space12,
+                    child: Text(
+                      'Сум',
+                      style: AppTextStyles.amount.copyWith(
+                        color: _textCurrency,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: AppDimensions.space8),
+            GestureDetector(
+              onTap: _isActionEnabled
+                  ? () {
+                      HapticFeedback.mediumImpact();
+                      widget.onPressed!();
+                    }
+                  : null,
+              child: Container(
+                height: AppDimensions.minTouchTarget,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppDimensions.space16,
+                ),
+                decoration: BoxDecoration(
+                  color: _isActionEnabled ? AppColors.primary : _disabledBg,
+                  borderRadius:
+                      BorderRadius.circular(AppDimensions.radiusMd),
+                ),
+                alignment: Alignment.center,
+                child: widget.isLoading
+                    ? const AppSpinner(
+                        size: 20,
+                        color: CupertinoColors.white,
+                      )
+                    : Text(
+                        'Keyingi',
+                        style: AppTextStyles.cta.copyWith(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: _isActionEnabled
+                              ? CupertinoColors.white
+                              : _disabledText,
+                        ),
+                      ),
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
