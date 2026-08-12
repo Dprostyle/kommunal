@@ -97,6 +97,6 @@ void main() {
     expect(find.text('История'), findsWidgets);
     expect(find.text('Профиль'), findsWidgets);
     expect(find.text('Электричество'), findsOneWidget);
-    expect(find.text('101 500 сум'), findsOneWidget);
+    expect(find.text('Оплата за электричество:'), findsOneWidget);
   });
 }

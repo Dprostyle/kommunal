@@ -33,11 +33,20 @@ class _HomeScreenState extends State<HomeScreen> {
   List<UtilityBill> _bills = const [];
   bool _loading = true;
   bool _paying = false;
+  String? _selectedBillId;
+  final TextEditingController _amountController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
+    _amountController.addListener(() => setState(() {}));
     _loadBills();
+  }
+
+  @override
+  void dispose() {
+    _amountController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadBills() async {
@@ -48,6 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         _bills = bills;
         _loading = false;
+        _selectedBillId ??= bills.isNotEmpty ? bills.first.id : null;
       });
     } catch (_) {
       if (!mounted) return;
@@ -58,21 +68,40 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  int get _selectedTotal => _bills
-      .where((b) => b.isSelected)
-      .fold<int>(0, (sum, b) => sum + b.amount);
+  UtilityBill? get _selectedBill {
+    final id = _selectedBillId;
+    if (id == null) return null;
+    for (final bill in _bills) {
+      if (bill.id == id) return bill;
+    }
+    return null;
+  }
 
-  List<UtilityBill> get _selectedBills =>
-      _bills.where((b) => b.isSelected).toList();
+  int? get _enteredAmount {
+    final text = _amountController.text.replaceAll(RegExp(r'\s'), '');
+    if (text.isEmpty) return null;
+    return int.tryParse(text);
+  }
+
+  bool get _canPay {
+    final amount = _enteredAmount;
+    return _selectedBill != null && amount != null && amount > 0 && !_paying;
+  }
+
+  void _selectBill(String billId) {
+    setState(() => _selectedBillId = billId);
+  }
 
   Future<void> _paySelected() async {
-    final bills = _selectedBills;
-    if (bills.isEmpty || _paying) return;
+    final bill = _selectedBill;
+    final amount = _enteredAmount;
+    if (bill == null || amount == null || amount <= 0 || _paying) return;
 
+    final billToPay = bill.copyWith(amount: amount);
     setState(() => _paying = true);
 
     try {
-      final payment = await widget.paymentsRepository.payBills(bills);
+      final payment = await widget.paymentsRepository.payBills([billToPay]);
       if (!mounted) return;
       await showPaymentResultSheet(
         context,
@@ -84,9 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
       await showPaymentResultSheet(
         context,
         success: false,
-        amountLabel: formatAmount(
-          bills.fold<int>(0, (sum, b) => sum + b.amount),
-        ),
+        amountLabel: formatAmount(amount),
       );
     } finally {
       if (mounted) setState(() => _paying = false);
@@ -128,20 +155,24 @@ class _HomeScreenState extends State<HomeScreen> {
                           )
                         else ...[
                           for (var i = 0; i < _bills.length; i++) ...[
-                            UtilityBillCard(bill: _bills[i]),
+                            UtilityBillCard(
+                              bill: _bills[i],
+                              isSelected: _bills[i].id == _selectedBillId,
+                              onTap: () => _selectBill(_bills[i].id),
+                            ),
                             if (i != _bills.length - 1)
                               const SizedBox(height: AppDimensions.cardGap),
                           ],
                           const SizedBox(height: AppDimensions.sectionGap),
-                          _TotalCard(
-                            label: 'Итого к оплате:',
-                            total: _selectedTotal,
+                          _PaymentInputCard(
+                            label: _paymentLabelFor(_selectedBill?.type),
+                            controller: _amountController,
                           ),
                           const SizedBox(height: AppDimensions.space12),
                           PaymentButton(
                             label: 'Оплатить',
                             isLoading: _paying,
-                            enabled: _selectedBills.isNotEmpty,
+                            enabled: _canPay,
                             onPressed: _paySelected,
                           ),
                         ],
@@ -405,11 +436,26 @@ class _DecorativeBankCard extends StatelessWidget {
   }
 }
 
-class _TotalCard extends StatelessWidget {
-  const _TotalCard({required this.label, required this.total});
+String? _paymentLabelFor(UtilityServiceType? type) {
+  return switch (type) {
+    UtilityServiceType.electricity => 'Оплата за электричество:',
+    UtilityServiceType.gas => 'Оплата за газ:',
+    UtilityServiceType.water => 'Оплата за воду:',
+    UtilityServiceType.garbage => 'Оплата за вывоз мусора:',
+    UtilityServiceType.phone => 'Оплата за телефон:',
+    UtilityServiceType.internet => 'Оплата за интернет:',
+    null => null,
+  };
+}
 
-  final String label;
-  final int total;
+class _PaymentInputCard extends StatelessWidget {
+  const _PaymentInputCard({
+    required this.label,
+    required this.controller,
+  });
+
+  final String? label;
+  final TextEditingController controller;
 
   @override
   Widget build(BuildContext context) {
@@ -420,29 +466,31 @@ class _TotalCard extends StatelessWidget {
       ),
       showShadow: false,
       border: Border.all(color: AppColors.separator),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Expanded(
-            child: Text(label, style: AppTextStyles.sectionTitle),
-          ),
-          AnimatedSwitcher(
-            duration: const Duration(milliseconds: 180),
-            switchInCurve: Curves.easeOut,
-            switchOutCurve: Curves.easeIn,
-            layoutBuilder: (currentChild, previousChildren) {
-              return Stack(
-                alignment: Alignment.centerRight,
-                children: <Widget>[
-                  ...previousChildren,
-                  ?currentChild,
-                ],
-              );
-            },
-            child: Text(
-              formatAmount(total),
-              key: ValueKey('$label-$total'),
-              style: AppTextStyles.amountLarge.copyWith(fontSize: 18),
-              textAlign: TextAlign.right,
+          if (label != null) ...[
+            Text(
+              label!,
+              style: AppTextStyles.sectionTitle,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: AppDimensions.space8),
+          ],
+          CupertinoTextField(
+            controller: controller,
+            keyboardType: TextInputType.number,
+            placeholder: 'Введите сумму',
+            textAlign: TextAlign.center,
+            style: AppTextStyles.amountLarge.copyWith(fontSize: 18),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppDimensions.space12,
+              vertical: AppDimensions.space8,
+            ),
+            decoration: BoxDecoration(
+              color: AppColors.background,
+              borderRadius: BorderRadius.circular(AppDimensions.radiusCard),
+              border: Border.all(color: AppColors.separator),
             ),
           ),
         ],
