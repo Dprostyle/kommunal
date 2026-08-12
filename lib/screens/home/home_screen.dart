@@ -83,9 +83,14 @@ class _HomeScreenState extends State<HomeScreen> {
     return int.tryParse(text);
   }
 
+  static const int _minPaymentAmount = 1000;
+
   bool get _canPay {
     final amount = _enteredAmount;
-    return _selectedBill != null && amount != null && amount > 0 && !_paying;
+    return _selectedBill != null &&
+        amount != null &&
+        amount >= _minPaymentAmount &&
+        !_paying;
   }
 
   void _selectBill(String billId) {
@@ -95,7 +100,12 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _paySelected() async {
     final bill = _selectedBill;
     final amount = _enteredAmount;
-    if (bill == null || amount == null || amount <= 0 || _paying) return;
+    if (bill == null ||
+        amount == null ||
+        amount < _minPaymentAmount ||
+        _paying) {
+      return;
+    }
 
     final billToPay = bill.copyWith(amount: amount);
     setState(() => _paying = true);
@@ -163,12 +173,12 @@ class _HomeScreenState extends State<HomeScreen> {
                             if (i != _bills.length - 1)
                               const SizedBox(height: AppDimensions.cardGap),
                           ],
-                          const SizedBox(height: AppDimensions.sectionGap),
+                          const SizedBox(height: AppDimensions.cardGap),
                           _PaymentInputCard(
                             label: _paymentLabelFor(_selectedBill?.type),
                             controller: _amountController,
                           ),
-                          const SizedBox(height: AppDimensions.space12),
+                          const SizedBox(height: AppDimensions.cardGap),
                           PaymentButton(
                             label: 'Оплатить',
                             isLoading: _paying,
@@ -448,7 +458,7 @@ String? _paymentLabelFor(UtilityServiceType? type) {
   };
 }
 
-class _PaymentInputCard extends StatelessWidget {
+class _PaymentInputCard extends StatefulWidget {
   const _PaymentInputCard({
     required this.label,
     required this.controller,
@@ -458,40 +468,75 @@ class _PaymentInputCard extends StatelessWidget {
   final TextEditingController controller;
 
   @override
+  State<_PaymentInputCard> createState() => _PaymentInputCardState();
+}
+
+class _PaymentInputCardState extends State<_PaymentInputCard> {
+  static const Color _focusBorderColor = Color(0xFF6600FF);
+
+  final FocusNode _focusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(() => setState(() {}));
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final borderColor =
+        _focusNode.hasFocus ? _focusBorderColor : AppColors.separator;
+
     return SectionCard(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppDimensions.cardPadding,
-        vertical: AppDimensions.space12,
-      ),
+      padding: const EdgeInsets.fromLTRB(12, 6, 12, 8),
       showShadow: false,
       border: Border.all(color: AppColors.separator),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          if (label != null) ...[
+          if (widget.label != null) ...[
             Text(
-              label!,
-              style: AppTextStyles.sectionTitle,
+              widget.label!,
+              style: AppTextStyles.secondary,
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: AppDimensions.space8),
+            const SizedBox(height: AppDimensions.space4),
           ],
-          CupertinoTextField(
-            controller: controller,
-            keyboardType: TextInputType.number,
-            placeholder: 'Введите сумму',
-            textAlign: TextAlign.center,
-            style: AppTextStyles.amountLarge.copyWith(fontSize: 18),
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppDimensions.space12,
-              vertical: AppDimensions.space8,
-            ),
-            decoration: BoxDecoration(
-              color: AppColors.background,
-              borderRadius: BorderRadius.circular(AppDimensions.radiusCard),
-              border: Border.all(color: AppColors.separator),
-            ),
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              CupertinoTextField(
+                controller: widget.controller,
+                focusNode: _focusNode,
+                keyboardType: TextInputType.number,
+                placeholder: 'Введите сумму',
+                textAlign: TextAlign.center,
+                style: AppTextStyles.amountLarge.copyWith(fontSize: 18),
+                padding: const EdgeInsets.fromLTRB(12, 12, 40, 12),
+                decoration: BoxDecoration(
+                  color: AppColors.background,
+                  borderRadius:
+                      BorderRadius.circular(AppDimensions.radiusCard),
+                  border: Border.all(color: borderColor),
+                ),
+              ),
+              Positioned(
+                right: 10,
+                child: Text(
+                  'Сум',
+                  style: AppTextStyles.amount.copyWith(
+                    color: AppColors.textPrimary,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
