@@ -557,6 +557,7 @@ class _PaymentInputCardState extends State<_PaymentInputCard> {
       children: [
         if (widget.label != null) ...[
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(width: AppDimensions.minTouchTarget),
               const SizedBox(width: AppDimensions.space8),
@@ -568,10 +569,24 @@ class _PaymentInputCardState extends State<_PaymentInputCard> {
                 ),
               ),
               const SizedBox(width: AppDimensions.space8),
-              _buildPayButton(ghost: true),
+              Opacity(
+                opacity: 0,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppDimensions.space16,
+                  ),
+                  child: Text(
+                    "To'lash",
+                    style: AppTextStyles.cta.copyWith(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
-          const SizedBox(height: AppDimensions.space8),
+          const SizedBox(height: AppDimensions.cardGap),
         ],
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -586,53 +601,58 @@ class _PaymentInputCardState extends State<_PaymentInputCard> {
             ),
             const SizedBox(width: AppDimensions.space8),
             Expanded(
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  CupertinoTextField(
-                    controller: widget.controller,
-                    focusNode: _focusNode,
-                    keyboardType: TextInputType.number,
-                    placeholder: 'Введите сумму',
-                    placeholderStyle: AppTextStyles.amount.copyWith(
-                      color: AppColors.textSecondary,
-                      fontWeight: FontWeight.w400,
-                      fontSize: 15,
-                    ),
-                    style: AppTextStyles.amount.copyWith(
-                      color: AppColors.textPrimary,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16,
-                    ),
-                    cursorColor: AppColors.primary,
-                    padding: const EdgeInsets.fromLTRB(
-                      AppDimensions.space12,
-                      AppDimensions.space12,
-                      44,
-                      AppDimensions.space12,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.card,
-                      borderRadius:
-                          BorderRadius.circular(AppDimensions.radiusMd),
-                      border: Border.all(
-                        color: borderColor,
-                        width: borderWidth,
+              child: SizedBox(
+                height: AppDimensions.minTouchTarget,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    CupertinoTextField(
+                      controller: widget.controller,
+                      focusNode: _focusNode,
+                      keyboardType: TextInputType.number,
+                      placeholder: "To'lov qilish",
+                      placeholderStyle: AppTextStyles.amount.copyWith(
+                        color: AppColors.textSecondary,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 15,
+                        height: 1.0,
                       ),
-                    ),
-                  ),
-                  Positioned(
-                    right: AppDimensions.space12,
-                    child: Text(
-                      'Сум',
                       style: AppTextStyles.amount.copyWith(
                         color: AppColors.textPrimary,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16,
+                        height: 1.0,
+                      ),
+                      cursorColor: AppColors.primary,
+                      padding: const EdgeInsets.fromLTRB(
+                        AppDimensions.space12,
+                        0,
+                        44,
+                        0,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.card,
+                        borderRadius:
+                            BorderRadius.circular(AppDimensions.radiusMd),
+                        border: Border.all(
+                          color: borderColor,
+                          width: borderWidth,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                    Positioned(
+                      right: AppDimensions.space12,
+                      child: Text(
+                        'Сум',
+                        style: AppTextStyles.amount.copyWith(
+                          color: AppColors.textPrimary,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
             const SizedBox(width: AppDimensions.space8),

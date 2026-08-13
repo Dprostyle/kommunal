@@ -16,7 +16,7 @@ class UtilityBillCard extends StatelessWidget {
     this.onTap,
   });
 
-  static const Color _selectedColor = Color(0xFF4A83F6);
+  static const Color _selectedColor = Color(0xFFCBDDF5);
 
   final UtilityBill bill;
   final bool isSelected;
