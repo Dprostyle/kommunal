@@ -16,7 +16,7 @@ class UtilityBillCard extends StatelessWidget {
     this.onTap,
   });
 
-  static const Color _selectedColor = Color(0xFF00FF7F);
+  static const Color _selectedColor = Color(0xFF4A83F6);
 
   final UtilityBill bill;
   final bool isSelected;
@@ -37,10 +37,8 @@ class UtilityBillCard extends StatelessWidget {
     return SectionCard(
       onTap: onTap,
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      backgroundColor: isSelected
-          ? _selectedColor.withValues(alpha: 0.18)
-          : AppColors.card,
-      border: isSelected ? Border.all(color: _selectedColor, width: 2) : null,
+      backgroundColor: isSelected ? _selectedColor : AppColors.card,
+      border: null,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [

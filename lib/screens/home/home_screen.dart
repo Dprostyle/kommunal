@@ -494,6 +494,57 @@ class _PaymentInputCardState extends State<_PaymentInputCard> {
   bool get _isActionEnabled =>
       widget.enabled && !widget.isLoading && widget.onPressed != null;
 
+  Widget _buildPayButton({bool ghost = false}) {
+    return IgnorePointer(
+      ignoring: ghost,
+      child: Opacity(
+        opacity: ghost ? 0 : 1,
+        child: GestureDetector(
+          onTap: ghost || !_isActionEnabled
+              ? null
+              : () {
+                  HapticFeedback.mediumImpact();
+                  widget.onPressed!();
+                },
+          child: Container(
+            height: AppDimensions.minTouchTarget,
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppDimensions.space16,
+            ),
+            decoration: BoxDecoration(
+              color: _isActionEnabled ? AppColors.primary : _disabledBg,
+              borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
+            ),
+            alignment: Alignment.center,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Opacity(
+                  opacity: widget.isLoading ? 0 : 1,
+                  child: Text(
+                    "To'lash",
+                    style: AppTextStyles.cta.copyWith(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: _isActionEnabled
+                          ? CupertinoColors.white
+                          : _disabledText,
+                    ),
+                  ),
+                ),
+                if (!ghost && widget.isLoading)
+                  const AppSpinner(
+                    size: 20,
+                    color: CupertinoColors.white,
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final borderColor = _focusNode.hasFocus
@@ -501,31 +552,41 @@ class _PaymentInputCardState extends State<_PaymentInputCard> {
         : AppColors.primary.withValues(alpha: 0.65);
     final borderWidth = _focusNode.hasFocus ? 1.5 : 1.0;
 
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
+    return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        ClipOval(
-          child: Image.asset(
-            'assets/1.png',
-            width: AppDimensions.minTouchTarget,
-            height: AppDimensions.minTouchTarget,
-            fit: BoxFit.cover,
-          ),
-        ),
-        const SizedBox(width: AppDimensions.space8),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
+        if (widget.label != null) ...[
+          Row(
             children: [
-              if (widget.label != null) ...[
-                Text(
+              const SizedBox(width: AppDimensions.minTouchTarget),
+              const SizedBox(width: AppDimensions.space8),
+              Expanded(
+                child: Text(
                   widget.label!,
                   style: AppTextStyles.secondary,
+                  textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: AppDimensions.space8),
-              ],
-              Stack(
+              ),
+              const SizedBox(width: AppDimensions.space8),
+              _buildPayButton(ghost: true),
+            ],
+          ),
+          const SizedBox(height: AppDimensions.space8),
+        ],
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            ClipOval(
+              child: Image.asset(
+                'assets/1.png',
+                width: AppDimensions.minTouchTarget,
+                height: AppDimensions.minTouchTarget,
+                fit: BoxFit.cover,
+              ),
+            ),
+            const SizedBox(width: AppDimensions.space8),
+            Expanded(
+              child: Stack(
                 alignment: Alignment.center,
                 children: [
                   CupertinoTextField(
@@ -573,51 +634,10 @@ class _PaymentInputCardState extends State<_PaymentInputCard> {
                   ),
                 ],
               ),
-            ],
-          ),
-        ),
-        const SizedBox(width: AppDimensions.space8),
-        GestureDetector(
-          onTap: _isActionEnabled
-              ? () {
-                  HapticFeedback.mediumImpact();
-                  widget.onPressed!();
-                }
-              : null,
-          child: Container(
-            height: AppDimensions.minTouchTarget,
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppDimensions.space16,
             ),
-            decoration: BoxDecoration(
-              color: _isActionEnabled ? AppColors.primary : _disabledBg,
-              borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
-            ),
-            alignment: Alignment.center,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                Opacity(
-                  opacity: widget.isLoading ? 0 : 1,
-                  child: Text(
-                    "To'lash",
-                    style: AppTextStyles.cta.copyWith(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: _isActionEnabled
-                          ? CupertinoColors.white
-                          : _disabledText,
-                    ),
-                  ),
-                ),
-                if (widget.isLoading)
-                  const AppSpinner(
-                    size: 20,
-                    color: CupertinoColors.white,
-                  ),
-              ],
-            ),
-          ),
+            const SizedBox(width: AppDimensions.space8),
+            _buildPayButton(),
+          ],
         ),
       ],
     );
