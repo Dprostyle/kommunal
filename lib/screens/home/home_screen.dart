@@ -602,11 +602,12 @@ class _PaymentInputCardState extends State<_PaymentInputCard> {
             const SizedBox(width: AppDimensions.space8),
             Expanded(
               child: SizedBox(
-                height: AppDimensions.minTouchTarget,
+                height: AppDimensions.ctaHeight,
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    CupertinoTextField(
+                    Positioned.fill(
+                      child: CupertinoTextField(
                       controller: widget.controller,
                       focusNode: _focusNode,
                       keyboardType: TextInputType.number,
@@ -639,6 +640,7 @@ class _PaymentInputCardState extends State<_PaymentInputCard> {
                           width: borderWidth,
                         ),
                       ),
+                    ),
                     ),
                     Positioned(
                       right: AppDimensions.space12,
